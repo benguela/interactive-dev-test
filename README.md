@@ -32,6 +32,9 @@ alt="Example video" width="480" height="360" /></a>
 
 ## Deliverables
 - All assets/files needed to show a working version of your animation.
-	- You can send us a link to your repo on github
-	- Or you can email the assets/files
+	- Fork this repo, and then submit a pull request
+	- Or email us a link to your repo
+	- Or email us your code
 - In addition, you may provide a hosted link.
+
+Get in touch with us at <careers@native.co.za>
