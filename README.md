@@ -24,7 +24,7 @@ alt="Example video" width="480" height="360" /></a>
 
 ## Mandatories
 
-- Use as little code as possible.
+- Use as little code as possible, while maintaining readability and elegance
 - Must have decent browser compatibility
 
 ## Bonus points for
