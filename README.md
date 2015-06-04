@@ -22,16 +22,12 @@ alt="Example video" width="480" height="360" /></a>
 - Draw a line from each dot to all other dots that are within a 100px radius of itself
 - The opacity/color of a line that connects 2 dots should be determined by the distance between the 2 dots, larger distances should produce lighter lines.
 
-## Mandatories
-
-- Use as little code as possible.
-- Must have decent browser compatibility
-
 ## Bonus points for
 
 - Your animation runs at 60fps on our test devices
 - Well written JavaScript (code reuse, OO where applicable)
 - Sensible markup
+- Decent browser compatibility
 - Please feel free to throw in any cool stuff such as transitions/effects
 
 ## Deliverables
