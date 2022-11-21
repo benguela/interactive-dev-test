@@ -6,7 +6,7 @@ In order to test your skills and get an idea of your programming ability we woul
 
 ## Objectives
 
-Convert the [provided video example](../master/video-example.mov) into a real-time animation using JavaScript.
+Convert the [provided video example](../master/video-example.mov) into a real-time animation using JavaScript or Typescript
 
 Please do not get hung up on small details, in this case we are merely trying to assess how good your coding ability is and your ability to solve problems.  Use the video example simply as a reference for what we are looking for.
 
