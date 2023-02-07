@@ -6,10 +6,6 @@ if (canvas) {
     canvas.height = window.innerHeight;
     c2d = canvas.getContext('2d');
 }
-// c2d.fillStyle='rgba(255,0,0,0,0.5)';
-// c2d.fillRect(100,100,100,100);
-// c2d.fillRect(400,100,100,100);
-// c2d.fillRect(300,300,100,100);
 class Circle {
     constructor(x = Math.random() * innerWidth, y = Math.random() * innerHeight, velocityX = (Math.random() - 0.5) * 10, velocityY = (Math.random() - 0.5) * 10, circleRadius = 30) {
         this.x = x;
@@ -18,14 +14,29 @@ class Circle {
         this.velocityY = velocityY;
         this.circleRadius = circleRadius;
     }
-    draw() {
+    draw(index) {
+        //draw circle 1
         c2d.beginPath();
         c2d.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, false);
         c2d.strokeStyle = 'blue';
         c2d.stroke();
+        if (index > 0) {
+            //draw circle 2
+            c2d.beginPath();
+            c2d.arc(circlesArray[index - 1].x, circlesArray[index - 1].y, circlesArray[index - 1].circleRadius, 0, Math.PI * 2, false);
+            c2d.strokeStyle = 'blue';
+            c2d.stroke();
+            //draw line
+            c2d.moveTo(circlesArray[index - 1].x, circlesArray[index - 1].y);
+        }
+        else {
+            c2d.moveTo(this.x, this.y);
+        }
+        c2d.lineTo(this.x, this.y);
+        c2d.stroke();
     }
     ;
-    update() {
+    update(index) {
         if (this.x + this.circleRadius > innerWidth || this.x - this.circleRadius < 0) {
             this.velocityX = -this.velocityX;
         }
@@ -36,14 +47,25 @@ class Circle {
         this.x += this.velocityX;
         //y speed or velocity to ward direction
         this.y += this.velocityY;
-        this.draw();
+        if (index > 0) {
+            //circle 2
+            if (circlesArray[index - 1].x + circlesArray[index - 1].circleRadius > innerWidth || circlesArray[index - 1].x - circlesArray[index - 1].circleRadius < 0) {
+                circlesArray[index - 1].velocityX = -circlesArray[index - 1].velocityX;
+            }
+            if (circlesArray[index - 1].y + circlesArray[index - 1].circleRadius > innerHeight || circlesArray[index - 1].y - circlesArray[index - 1].circleRadius < 0) {
+                circlesArray[index - 1].velocityY = -circlesArray[index - 1].velocityY;
+            }
+            //x speed or velocity to ward direction
+            circlesArray[index - 1].x += circlesArray[index - 1].velocityX;
+            //y speed or velocity to ward direction
+            circlesArray[index - 1].y += circlesArray[index - 1].velocityY;
+        }
+        this.draw(index);
     }
     ;
 }
-let circle1 = new Circle(200, 200, 2, 2, 10);
-let circle2 = new Circle();
 let circlesArray = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 200; i++) {
     let x = Math.random() * innerWidth;
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
@@ -54,8 +76,11 @@ for (let i = 0; i < 100; i++) {
 function animate() {
     requestAnimationFrame(animate);
     c2d.clearRect(0, 0, innerWidth, innerHeight);
-    circlesArray.forEach(function (item) {
-        item.update();
-    });
+    for (let i = 0; i < circlesArray.length; i += 2) {
+        circlesArray[i].update(i);
+    }
+    // circlesArray.forEach(function(item,index){
+    //     item.update(index);
+    // })
 }
 animate();
