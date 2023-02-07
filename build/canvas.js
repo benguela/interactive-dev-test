@@ -3,6 +3,7 @@ let canvas = document.querySelector('canvas');
 let c2d;
 const framePerSecond = 60;
 let alpha = 0.5;
+let maxCircleRaduis = (Math.random() * 8) + 2;
 if (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -39,10 +40,13 @@ class Circle {
             c2d.moveTo(this.x, this.y);
         }
         c2d.lineTo(this.x, this.y);
-        c2d.strokeStyle = "rgba(72,72,72," + this.calculateCircleAlpha(index) + ")";
+        c2d.strokeStyle = "rgba(" + this.sendRandomColor() + "," + this.sendRandomColor() + "," + this.sendRandomColor() + "," + this.calculateCircleAlpha(index) + ")";
         c2d.stroke();
     }
     ;
+    sendRandomColor() {
+        return ((Math.random() * 255) + 0).toFixed();
+    }
     update(index) {
         if (this.x + this.circleRadius > innerWidth || this.x - this.circleRadius < 0) {
             this.velocityX = -this.velocityX;
@@ -96,7 +100,7 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = (Math.random() * 8) + 2;
+    let circleRadius = maxCircleRaduis;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
