@@ -18,21 +18,22 @@ class Circle {
         this.circleRadius = circleRadius;
     }
     draw(index) {
+        let randomColor = this.sendRandomColor();
         //draw circle 1
         c2d.beginPath();
         c2d.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, false);
-        c2d.strokeStyle = 'blue';
+        c2d.strokeStyle = "rgba(" + randomColor + "," + randomColor + "," + randomColor + ",1)";
         c2d.stroke();
         c2d.fill();
-        c2d.fillStyle = "black";
+        c2d.fillStyle = "rgba(" + randomColor + "," + randomColor + "," + randomColor + ",1)";
         if (index > 0) {
             //draw circle 2
             c2d.beginPath();
             c2d.arc(circlesArray[index - 1].x, circlesArray[index - 1].y, circlesArray[index - 1].circleRadius, 0, Math.PI * 2, false);
-            c2d.strokeStyle = 'blue';
+            c2d.strokeStyle = "rgba(" + randomColor + "," + randomColor + "," + randomColor + ",1)";
             c2d.stroke();
             c2d.fill();
-            c2d.fillStyle = "black";
+            c2d.fillStyle = "rgba(" + randomColor + "," + randomColor + "," + randomColor + ",1)";
             //draw line
             c2d.moveTo(circlesArray[index - 1].x, circlesArray[index - 1].y);
         }
@@ -40,12 +41,12 @@ class Circle {
             c2d.moveTo(this.x, this.y);
         }
         c2d.lineTo(this.x, this.y);
-        c2d.strokeStyle = "rgba(" + this.sendRandomColor() + "," + this.sendRandomColor() + "," + this.sendRandomColor() + "," + this.calculateCircleAlpha(index) + ")";
+        c2d.strokeStyle = "rgba(" + randomColor + "," + randomColor + "," + randomColor + "," + this.calculateCircleAlpha(index) + ")";
         c2d.stroke();
     }
     ;
     sendRandomColor() {
-        return ((Math.random() * 255) + 0).toFixed();
+        return Math.floor(Math.random() * 255) + 1;
     }
     update(index) {
         if (this.x + this.circleRadius > innerWidth || this.x - this.circleRadius < 0) {
