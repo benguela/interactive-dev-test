@@ -12,7 +12,8 @@ c2d.fillRect(400, 100, 100, 100);
 c2d.fillRect(300, 300, 100, 100);
 let x = 200;
 let y = 200;
-let velocity = 5;
+let velocityX = 5;
+let velocityY = 5;
 let circleRadius = 30;
 function animate() {
     requestAnimationFrame(animate);
@@ -22,9 +23,14 @@ function animate() {
     c2d.strokeStyle = 'blue';
     c2d.stroke();
     if (x + circleRadius > innerWidth || x - circleRadius < 0) {
-        velocity = -velocity;
-        //x speed or velocity to ward direction
+        velocityX = -velocityX;
     }
-    x += velocity;
+    if (y + circleRadius > innerHeight || y - circleRadius < 0) {
+        velocityY = -velocityY;
+    }
+    //x speed or velocity to ward direction
+    x += velocityX;
+    //y speed or velocity to ward direction
+    y += velocityY;
 }
 animate();
