@@ -1,5 +1,7 @@
 let canvas = document.querySelector('canvas');
 let c2d;
+const framePerSecond = 60;
+let alpha=0.5;
 
 if (canvas) {
     canvas.width = window.innerWidth;
@@ -34,6 +36,8 @@ class Circle {
         c2d.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, false);
         c2d.strokeStyle = 'blue';
         c2d.stroke();
+        c2d.fill();
+        c2d.fillStyle="black";
 
 
         if (index > 0) {
@@ -42,13 +46,18 @@ class Circle {
             c2d.arc(circlesArray[index - 1].x, circlesArray[index - 1].y, circlesArray[index - 1].circleRadius, 0, Math.PI * 2, false);
             c2d.strokeStyle = 'blue';
             c2d.stroke();
+            c2d.fill();
+            c2d.fillStyle="black";
             //draw line
             c2d.moveTo(circlesArray[index - 1].x, circlesArray[index - 1].y);
         } else {
             c2d.moveTo(this.x, this.y);
         }
         c2d.lineTo(this.x, this.y);
+        
+        c2d.strokeStyle ="rgba(72,72,72,"+this.calculateCircleAlpha(index)+")";
         c2d.stroke();
+        
     };
     update(index) {
         if (this.x + this.circleRadius > innerWidth || this.x - this.circleRadius < 0) {
@@ -76,6 +85,17 @@ class Circle {
         }
         this.draw(index);
     };
+    calculateCircleAlpha(index){
+        let myNumberString: string = "1";
+        let myNumber: number = +myNumberString;
+        let finalAlpha=1;
+        let theYspace = Math.abs(circlesArray[index - 1].y - circlesArray[index].y) ;
+        let theXspace = Math.abs(circlesArray[index - 1].x - circlesArray[index].x) ;
+        let theDistance = Math.abs(theYspace-theXspace);
+        if(theDistance<1000){
+            finalAlpha=0.(myNumber/1000).toFixed(3);
+        }
+    }
 }
 
 let circlesArray: any[] = [];
@@ -84,11 +104,13 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = 10;
+    let circleRadius = (Math.random() * 10) +5;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
+    setTimeout(() => {
     requestAnimationFrame(animate);
+}, 1000 / framePerSecond);
     c2d.clearRect(0, 0, innerWidth, innerHeight);
     for (let i = 0; i < circlesArray.length; i += 2) {
         circlesArray[i].update(i);
