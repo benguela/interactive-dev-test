@@ -123,7 +123,7 @@ for (let i = 0; i < 200; i++) {
 function animate() {
     setTimeout(() => {
         requestAnimationFrame(animate);
-    }, 1000 / framePerSecond);
+    }, 60 / framePerSecond);
     c2d.clearRect(0, 0, innerWidth, innerHeight);
     for (let i = 0; i < circlesArray.length; i += 2) {
         circlesArray[i].update(i);
