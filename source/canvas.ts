@@ -62,7 +62,7 @@ for (let i = 0; i < 100; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = 30;
+    let circleRadius = 10;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
