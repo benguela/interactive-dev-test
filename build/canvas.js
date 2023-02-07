@@ -39,7 +39,7 @@ class Circle {
             c2d.moveTo(this.x, this.y);
         }
         c2d.lineTo(this.x, this.y);
-        c2d.strokeStyle = "rgba(72,72,72," + alpha + ")";
+        c2d.strokeStyle = "rgba(72,72,72," + this.calculateCircleAlpha(index) + ")";
         c2d.stroke();
     }
     ;
@@ -70,6 +70,25 @@ class Circle {
         this.draw(index);
     }
     ;
+    calculateCircleAlpha(index) {
+        let myNumberString = "0";
+        let finalAlpha = +myNumberString;
+        if (index > 0) {
+            let theYspace = Math.abs(circlesArray[index - 1].y - circlesArray[index].y);
+            let theXspace = Math.abs(circlesArray[index - 1].x - circlesArray[index].x);
+            let theDistance = Math.abs(theYspace - theXspace);
+            if (theDistance < 200) {
+                finalAlpha = 1;
+            }
+            else {
+                finalAlpha = parseInt((theDistance / innerWidth).toFixed(3));
+            }
+        }
+        if (finalAlpha < 0.3) {
+            finalAlpha = 0.3;
+        }
+        return finalAlpha;
+    }
 }
 let circlesArray = [];
 for (let i = 0; i < 200; i++) {
@@ -77,7 +96,7 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = (Math.random() * 10) + 5;
+    let circleRadius = (Math.random() * 8) + 2;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
