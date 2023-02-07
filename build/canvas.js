@@ -3,7 +3,6 @@ let canvas = document.querySelector('canvas');
 let c2d;
 const framePerSecond = 60;
 let alpha = 0.5;
-let maxCircleRaduis = (Math.random() * 8) + 2;
 if (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -101,7 +100,7 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = maxCircleRaduis;
+    let circleRadius = (Math.random() * 8) + 2;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {

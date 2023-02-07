@@ -2,7 +2,6 @@ let canvas = document.querySelector('canvas');
 let c2d;
 const framePerSecond = 60;
 let alpha = 0.5;
-let maxCircleRaduis = (Math.random() * 8) + 2;
 
 if (canvas) {
     canvas.width = window.innerWidth;
@@ -90,6 +89,7 @@ class Circle {
         }
         this.draw(index);
     };
+    
     calculateCircleAlpha(index) {
         let myNumberString: string = "0";
         let finalAlpha: number = +myNumberString;
@@ -108,6 +108,7 @@ class Circle {
         }
         return finalAlpha;
     }
+   
 }
 
 let circlesArray: any[] = [];
@@ -116,7 +117,7 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = maxCircleRaduis;
+    let circleRadius = (Math.random() * 8) + 2;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
