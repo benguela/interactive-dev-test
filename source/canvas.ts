@@ -19,11 +19,11 @@ class Circle {
     velocityX: number;
     velocityY: number;
     circleRadius: number;
-    constructor(x: number= Math.random() * innerWidth,
-        y: number= Math.random() * innerHeight,
-        velocityX: number= (Math.random() - 0.5) * 10,
-        velocityY: number= (Math.random() - 0.5) * 10,
-        circleRadius: number=30) {
+    constructor(x: number = Math.random() * innerWidth,
+        y: number = Math.random() * innerHeight,
+        velocityX: number = (Math.random() - 0.5) * 10,
+        velocityY: number = (Math.random() - 0.5) * 10,
+        circleRadius: number = 30) {
         this.x = x;
         this.y = y;
         this.velocityX = velocityX;
@@ -54,19 +54,24 @@ class Circle {
     };
 }
 
-let circle1 = new Circle(200, 200,2,2,10);
+let circle1 = new Circle(200, 200, 2, 2, 10);
 let circle2 = new Circle();
-let x = Math.random() * innerWidth;
-let y = Math.random() * innerHeight;
-let velocityX = (Math.random() - 0.5) * 10;
-let velocityY = (Math.random() - 0.5) * 10;
-let circleRadius = 30;
+let circlesArray : any[]=[];
+for (let i = 0; i < 100; i++) {
+    let x = Math.random() * innerWidth;
+    let y = Math.random() * innerHeight;
+    let velocityX = (Math.random() - 0.5) * 10;
+    let velocityY = (Math.random() - 0.5) * 10;
+    let circleRadius = 30;
+    circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
+}
 function animate() {
     requestAnimationFrame(animate);
     c2d.clearRect(0, 0, innerWidth, innerHeight);
-    circle1.update();
-    circle2.update();
-
-
+    circlesArray.forEach(function(item){
+        item.update();
+    })
 }
 animate();
+
+
