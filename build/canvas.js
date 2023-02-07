@@ -1,6 +1,8 @@
 "use strict";
 let canvas = document.querySelector('canvas');
 let c2d;
+const framePerSecond = 60;
+let alpha = 0.5;
 if (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -20,12 +22,16 @@ class Circle {
         c2d.arc(this.x, this.y, this.circleRadius, 0, Math.PI * 2, false);
         c2d.strokeStyle = 'blue';
         c2d.stroke();
+        c2d.fill();
+        c2d.fillStyle = "black";
         if (index > 0) {
             //draw circle 2
             c2d.beginPath();
             c2d.arc(circlesArray[index - 1].x, circlesArray[index - 1].y, circlesArray[index - 1].circleRadius, 0, Math.PI * 2, false);
             c2d.strokeStyle = 'blue';
             c2d.stroke();
+            c2d.fill();
+            c2d.fillStyle = "black";
             //draw line
             c2d.moveTo(circlesArray[index - 1].x, circlesArray[index - 1].y);
         }
@@ -33,6 +39,7 @@ class Circle {
             c2d.moveTo(this.x, this.y);
         }
         c2d.lineTo(this.x, this.y);
+        c2d.strokeStyle = "rgba(72,72,72," + alpha + ")";
         c2d.stroke();
     }
     ;
@@ -70,11 +77,13 @@ for (let i = 0; i < 200; i++) {
     let y = Math.random() * innerHeight;
     let velocityX = (Math.random() - 0.5) * 10;
     let velocityY = (Math.random() - 0.5) * 10;
-    let circleRadius = 10;
+    let circleRadius = (Math.random() * 10) + 5;
     circlesArray.push(new Circle(x, y, velocityX, velocityY, circleRadius));
 }
 function animate() {
-    requestAnimationFrame(animate);
+    setTimeout(() => {
+        requestAnimationFrame(animate);
+    }, 1000 / framePerSecond);
     c2d.clearRect(0, 0, innerWidth, innerHeight);
     for (let i = 0; i < circlesArray.length; i += 2) {
         circlesArray[i].update(i);
