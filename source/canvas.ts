@@ -14,10 +14,10 @@ c2d.fillRect(100,100,100,100);
 c2d.fillRect(400,100,100,100);
 c2d.fillRect(300,300,100,100);
 
-let x=200;
-let y=200;
-let velocityX=5;
-let velocityY=5;
+let x=Math.random()*innerWidth;
+let y=Math.random()*innerHeight;
+let velocityX=(Math.random()-0.5)*10;
+let velocityY=(Math.random()-0.5)*10;
 let circleRadius=30;
 function animate(){
     requestAnimationFrame(animate);
