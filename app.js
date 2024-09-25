@@ -1,8 +1,8 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const width = (canvas.width = window.innerWidth);
-const height = (canvas.height = window.innerHeight);
+let width = (canvas.width = window.innerWidth);
+let height = (canvas.height = window.innerHeight);
 
 const IDEAL_FPS = 60;
 let FPS = 60;
@@ -62,7 +62,7 @@ for (let i = 0; i < nDots; i++) {
 		new Dot(
 			Math.random() * width,
 			Math.random() * height,
-			Math.random() * size,
+			size,
 			Math.random() * speed
 		)
 	);
@@ -81,7 +81,7 @@ document.getElementById("nDots").oninput = function () {
 				new Dot(
 					Math.random() * width,
 					Math.random() * height,
-					Math.random() * size,
+					size,
 					Math.random() * speed
 				)
 			);
@@ -112,6 +112,10 @@ document.getElementById("collisions").onchange = function () {
 	hasCollisions = this.checked;
 };
 
+// max is half the width of the canvas
+const lineDistanceInput = document.getElementById("lineDistance");
+lineDistanceInput.max = width / 2;
+
 document.getElementById("lineDistance").oninput = function () {
 	lineDistance = parseInt(this.value);
 
@@ -122,6 +126,34 @@ document.getElementById("lineDistance").oninput = function () {
 			grid[i].push([]);
 		}
 	}
+};
+
+window.onresize = function () {
+	width = canvas.width = window.innerWidth;
+	height = canvas.height = window.innerHeight;
+
+	lineDistanceInput.max = width / 2;
+	if (lineDistanceInput.value > width / 2) {
+		lineDistanceInput.value = width / 2;
+	}
+
+	grid = [];
+	for (let i = 0; i < width / lineDistance; i++) {
+		grid.push([]);
+		for (let j = 0; j < height / lineDistance; j++) {
+			grid[i].push([]);
+		}
+	}
+
+	// move dots to random positions
+	dots.forEach((dot) => {
+		if (dot.x > width || dot.y > height) {
+			dot.x = Math.random() * width;
+			dot.y = Math.random() * height;
+		}
+	});
+
+	updateGrid();
 };
 
 function updateGrid() {
