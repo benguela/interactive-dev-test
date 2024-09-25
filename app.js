@@ -4,13 +4,14 @@ const ctx = canvas.getContext("2d");
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
 
-let IDEAL_FPS = 60;
+const IDEAL_FPS = 60;
 let FPS = 60;
 
 let dots = [];
 let speed = 10;
 let nDots = 100;
 let size = 10;
+let hasCollisions = false;
 
 function genHexString(len) {
 	const hex = "0123456789ABCDEF";
@@ -96,6 +97,10 @@ document.getElementById("size").oninput = function () {
 	});
 };
 
+document.getElementById("collisions").onchange = function () {
+	hasCollisions = this.checked;
+};
+
 // split the window into 100px x 100px squares to make it easier to search dots
 let grid = [];
 
@@ -142,6 +147,7 @@ function draw() {
 		const xMax = Math.min(width / 100 - 1, x + 1);
 		const yMin = Math.max(0, y - 1);
 		const yMax = Math.min(height / 100 - 1, y + 1);
+
 		for (let i = xMin; i <= xMax; i++) {
 			for (let j = yMin; j <= yMax; j++) {
 				const neighbors = grid[i][j];
@@ -164,6 +170,74 @@ function draw() {
 				}
 			}
 		}
+
+		// search for collisions in the same square and change the speed
+		if (hasCollisions) {
+			const neighbors = grid[x][y];
+			for (let j = 0; j < neighbors.length; j++) {
+				const q = neighbors[j];
+
+				if (p !== q) {
+					const dx = p.x - q.x;
+					const dy = p.y - q.y;
+					const dist = Math.sqrt(dx * dx + dy * dy);
+
+					if (dist < p.size + q.size) {
+						q.vx = -q.vx;
+						q.vy = -q.vy;
+					}
+				}
+			}
+		}
+
+		// for (let j = 0; j < neighbors.length; j++) {
+		// 	const q = neighbors[j];
+		// 	if (p !== q) {
+		// 		const dx = p.x - q.x;
+		// 		const dy = p.y - q.y;
+		// 		const dist = Math.sqrt(dx * dx + dy * dy);
+		// 		if (dist < p.size + q.size) {
+		// 			// change color
+		// 			// p.color = "#" + genHexString(6);
+		// 			// q.color = "#" + genHexString(6);
+
+		// 			// change speed
+		// 			const m1 = p.size;
+		// 			const m2 = q.size;
+		// 			const v1 = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+		// 			const v2 = Math.sqrt(q.vx * q.vx + q.vy * q.vy);
+		// 			const theta1 = Math.atan2(p.vy, p.vx);
+		// 			const theta2 = Math.atan2(q.vy, q.vx);
+		// 			const phi = Math.atan2(dy, dx);
+		// 			const v1x = v1 * Math.cos(theta1 - phi);
+		// 			const v1y = v1 * Math.sin(theta1 - phi);
+		// 			const v2x = v2 * Math.cos(theta2 - phi);
+		// 			const v2y = v2 * Math.sin(theta2 - phi);
+		// 			const vf1x = ((m1 - m2) * v1x + 2 * m2 * v2x) / (m1 + m2);
+		// 			const vf1y = v1y;
+		// 			const vf2x = ((m2 - m1) * v2x + 2 * m1 * v1x) / (m1 + m2);
+		// 			const vf2y = v2y;
+		// 			const vf1 = Math.sqrt(vf1x * vf1x + vf1y * vf1y);
+		// 			const vf2 = Math.sqrt(vf2x * vf2x + vf2y * vf2y);
+		// 			const vfx1 =
+		// 				vf1 * Math.cos(phi) * Math.cos(theta1) +
+		// 				vf1 * Math.sin(phi) * Math.cos(theta1 + Math.PI / 2);
+		// 			const vfy1 =
+		// 				vf1 * Math.cos(phi) * Math.sin(theta1) +
+		// 				vf1 * Math.sin(phi) * Math.sin(theta1 + Math.PI / 2);
+		// 			const vfx2 =
+		// 				vf2 * Math.cos(phi) * Math.cos(theta2) +
+		// 				vf2 * Math.sin(phi) * Math.cos(theta2 + Math.PI / 2);
+		// 			const vfy2 =
+		// 				vf2 * Math.cos(phi) * Math.sin(theta2) +
+		// 				vf2 * Math.sin(phi) * Math.sin(theta2 + Math.PI / 2);
+		// 			p.vx = vfx1;
+		// 			p.vy = vfy1;
+		// 			q.vx = vfx2;
+		// 			q.vy = vfy2;
+		// 		}
+		// 	}
+		// }
 	}
 
 	updateGrid();
