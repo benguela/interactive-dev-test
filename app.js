@@ -96,6 +96,30 @@ document.getElementById("size").oninput = function () {
 	});
 };
 
+// split the window into 100px x 100px squares to make it easier to search dots
+let grid = [];
+
+for (let i = 0; i < width / 100; i++) {
+	grid.push([]);
+	for (let j = 0; j < height / 100; j++) {
+		grid[i].push([]);
+	}
+}
+
+function updateGrid() {
+	for (let i = 0; i < width / 100; i++) {
+		for (let j = 0; j < height / 100; j++) {
+			grid[i][j] = [];
+		}
+	}
+
+	dots.forEach((dot) => {
+		const x = Math.max(0, Math.floor(dot.x / 100));
+		const y = Math.max(0, Math.floor(dot.y / 100));
+		grid[x][y].push(dot);
+	});
+}
+
 function draw() {
 	ctx.clearRect(0, 0, width, height);
 
@@ -110,23 +134,39 @@ function draw() {
 		ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
 		ctx.fill();
 
-		// draw lines between this and other dots
-		for (let j = 0; j < nDots; j++) {
-			const q = dots[j];
-			const dx = p.x - q.x;
-			const dy = p.y - q.y;
-			const dist = Math.sqrt(dx * dx + dy * dy);
-			if (dist < 100) {
-				// change opacity based on distance
-				ctx.globalAlpha = 1 - dist / 100;
+		const x = Math.max(0, Math.floor(p.x / 100));
+		const y = Math.max(0, Math.floor(p.y / 100));
 
-				ctx.beginPath();
-				ctx.moveTo(p.x, p.y);
-				ctx.lineTo(q.x, q.y);
-				ctx.stroke();
+		// draw lines between this and other dots, search only the 8 neighbors
+		const xMin = Math.max(0, x - 1);
+		const xMax = Math.min(width / 100 - 1, x + 1);
+		const yMin = Math.max(0, y - 1);
+		const yMax = Math.min(height / 100 - 1, y + 1);
+		for (let i = xMin; i <= xMax; i++) {
+			for (let j = yMin; j <= yMax; j++) {
+				const neighbors = grid[i][j];
+				for (let k = 0; k < neighbors.length; k++) {
+					const q = neighbors[k];
+					if (p !== q) {
+						const dx = p.x - q.x;
+						const dy = p.y - q.y;
+						const dist = Math.sqrt(dx * dx + dy * dy);
+						if (dist < 100) {
+							// change opacity based on distance
+							ctx.globalAlpha = 1 - dist / 100;
+
+							ctx.beginPath();
+							ctx.moveTo(p.x, p.y);
+							ctx.lineTo(q.x, q.y);
+							ctx.stroke();
+						}
+					}
+				}
 			}
 		}
 	}
+
+	updateGrid();
 }
 
 let lastTime = 0;
