@@ -6,12 +6,23 @@ const height = (canvas.height = window.innerHeight);
 
 const IDEAL_FPS = 60;
 let FPS = 60;
+let lineDistance = 100;
 
 let dots = [];
 let speed = 10;
 let nDots = 100;
 let size = 10;
 let hasCollisions = false;
+
+// split the window into 100px x 100px squares to make it easier to search dots
+let grid = [];
+
+for (let i = 0; i < width / lineDistance; i++) {
+	grid.push([]);
+	for (let j = 0; j < height / lineDistance; j++) {
+		grid[i].push([]);
+	}
+}
 
 function genHexString(len) {
 	const hex = "0123456789ABCDEF";
@@ -59,7 +70,7 @@ for (let i = 0; i < nDots; i++) {
 
 // get values from input
 document.getElementById("nDots").oninput = function () {
-	nDots = this.value;
+	nDots = parseInt(this.value);
 	const oldDots = dots;
 	dots = [];
 	for (let i = 0; i < nDots; i++) {
@@ -80,7 +91,7 @@ document.getElementById("nDots").oninput = function () {
 
 document.getElementById("speed").oninput = function () {
 	const oldSpeed = speed;
-	speed = this.value;
+	speed = parseInt(this.value);
 	// update speed of all dots
 	dots.forEach((dot) => {
 		dot.vx = (dot.vx / oldSpeed) * speed;
@@ -90,7 +101,7 @@ document.getElementById("speed").oninput = function () {
 
 document.getElementById("size").oninput = function () {
 	const oldSize = size;
-	size = this.value;
+	size = parseInt(this.value);
 	// update size of all dots
 	dots.forEach((dot) => {
 		dot.size = (dot.size / oldSize) * size;
@@ -101,26 +112,28 @@ document.getElementById("collisions").onchange = function () {
 	hasCollisions = this.checked;
 };
 
-// split the window into 100px x 100px squares to make it easier to search dots
-let grid = [];
+document.getElementById("lineDistance").oninput = function () {
+	lineDistance = parseInt(this.value);
 
-for (let i = 0; i < width / 100; i++) {
-	grid.push([]);
-	for (let j = 0; j < height / 100; j++) {
-		grid[i].push([]);
+	grid = [];
+	for (let i = 0; i < width / lineDistance; i++) {
+		grid.push([]);
+		for (let j = 0; j < height / lineDistance; j++) {
+			grid[i].push([]);
+		}
 	}
-}
+};
 
 function updateGrid() {
-	for (let i = 0; i < width / 100; i++) {
-		for (let j = 0; j < height / 100; j++) {
+	for (let i = 0; i < width / lineDistance; i++) {
+		for (let j = 0; j < height / lineDistance; j++) {
 			grid[i][j] = [];
 		}
 	}
 
 	dots.forEach((dot) => {
-		const x = Math.max(0, Math.floor(dot.x / 100));
-		const y = Math.max(0, Math.floor(dot.y / 100));
+		const x = Math.max(0, Math.floor(dot.x / lineDistance));
+		const y = Math.max(0, Math.floor(dot.y / lineDistance));
 		grid[x][y].push(dot);
 	});
 }
@@ -139,14 +152,14 @@ function draw() {
 		ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
 		ctx.fill();
 
-		const x = Math.max(0, Math.floor(p.x / 100));
-		const y = Math.max(0, Math.floor(p.y / 100));
+		const x = Math.max(0, Math.floor(p.x / lineDistance));
+		const y = Math.max(0, Math.floor(p.y / lineDistance));
 
 		// draw lines between this and other dots, search only the 8 neighbors
 		const xMin = Math.max(0, x - 1);
-		const xMax = Math.min(width / 100 - 1, x + 1);
+		const xMax = Math.min(width / lineDistance - 1, x + 1);
 		const yMin = Math.max(0, y - 1);
-		const yMax = Math.min(height / 100 - 1, y + 1);
+		const yMax = Math.min(height / lineDistance - 1, y + 1);
 
 		for (let i = xMin; i <= xMax; i++) {
 			for (let j = yMin; j <= yMax; j++) {
@@ -157,9 +170,9 @@ function draw() {
 						const dx = p.x - q.x;
 						const dy = p.y - q.y;
 						const dist = Math.sqrt(dx * dx + dy * dy);
-						if (dist < 100) {
+						if (dist < lineDistance) {
 							// change opacity based on distance
-							ctx.globalAlpha = 1 - dist / 100;
+							ctx.globalAlpha = 1 - dist / lineDistance;
 
 							ctx.beginPath();
 							ctx.moveTo(p.x, p.y);
@@ -189,55 +202,6 @@ function draw() {
 				}
 			}
 		}
-
-		// for (let j = 0; j < neighbors.length; j++) {
-		// 	const q = neighbors[j];
-		// 	if (p !== q) {
-		// 		const dx = p.x - q.x;
-		// 		const dy = p.y - q.y;
-		// 		const dist = Math.sqrt(dx * dx + dy * dy);
-		// 		if (dist < p.size + q.size) {
-		// 			// change color
-		// 			// p.color = "#" + genHexString(6);
-		// 			// q.color = "#" + genHexString(6);
-
-		// 			// change speed
-		// 			const m1 = p.size;
-		// 			const m2 = q.size;
-		// 			const v1 = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-		// 			const v2 = Math.sqrt(q.vx * q.vx + q.vy * q.vy);
-		// 			const theta1 = Math.atan2(p.vy, p.vx);
-		// 			const theta2 = Math.atan2(q.vy, q.vx);
-		// 			const phi = Math.atan2(dy, dx);
-		// 			const v1x = v1 * Math.cos(theta1 - phi);
-		// 			const v1y = v1 * Math.sin(theta1 - phi);
-		// 			const v2x = v2 * Math.cos(theta2 - phi);
-		// 			const v2y = v2 * Math.sin(theta2 - phi);
-		// 			const vf1x = ((m1 - m2) * v1x + 2 * m2 * v2x) / (m1 + m2);
-		// 			const vf1y = v1y;
-		// 			const vf2x = ((m2 - m1) * v2x + 2 * m1 * v1x) / (m1 + m2);
-		// 			const vf2y = v2y;
-		// 			const vf1 = Math.sqrt(vf1x * vf1x + vf1y * vf1y);
-		// 			const vf2 = Math.sqrt(vf2x * vf2x + vf2y * vf2y);
-		// 			const vfx1 =
-		// 				vf1 * Math.cos(phi) * Math.cos(theta1) +
-		// 				vf1 * Math.sin(phi) * Math.cos(theta1 + Math.PI / 2);
-		// 			const vfy1 =
-		// 				vf1 * Math.cos(phi) * Math.sin(theta1) +
-		// 				vf1 * Math.sin(phi) * Math.sin(theta1 + Math.PI / 2);
-		// 			const vfx2 =
-		// 				vf2 * Math.cos(phi) * Math.cos(theta2) +
-		// 				vf2 * Math.sin(phi) * Math.cos(theta2 + Math.PI / 2);
-		// 			const vfy2 =
-		// 				vf2 * Math.cos(phi) * Math.sin(theta2) +
-		// 				vf2 * Math.sin(phi) * Math.sin(theta2 + Math.PI / 2);
-		// 			p.vx = vfx1;
-		// 			p.vy = vfy1;
-		// 			q.vx = vfx2;
-		// 			q.vy = vfy2;
-		// 		}
-		// 	}
-		// }
 	}
 
 	updateGrid();
