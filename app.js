@@ -4,12 +4,13 @@ const ctx = canvas.getContext("2d");
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
 
-const FPS = 60;
+let IDEAL_FPS = 60;
+let FPS = 60;
 
 let dots = [];
-let maxSpeed = 10;
+let speed = 10;
 let nDots = 100;
-let maxSize = 10;
+let size = 10;
 
 function genHexString(len) {
 	const hex = "0123456789ABCDEF";
@@ -49,8 +50,8 @@ for (let i = 0; i < nDots; i++) {
 		new Dot(
 			Math.random() * width,
 			Math.random() * height,
-			Math.random() * maxSize,
-			Math.random() * maxSpeed
+			Math.random() * size,
+			Math.random() * speed
 		)
 	);
 }
@@ -68,34 +69,34 @@ document.getElementById("nDots").oninput = function () {
 				new Dot(
 					Math.random() * width,
 					Math.random() * height,
-					Math.random() * maxSize,
-					Math.random() * maxSpeed
+					Math.random() * size,
+					Math.random() * speed
 				)
 			);
 		}
 	}
 };
 
-document.getElementById("maxSpeed").oninput = function () {
-	const oldSpeed = maxSpeed;
-	maxSpeed = this.value;
+document.getElementById("speed").oninput = function () {
+	const oldSpeed = speed;
+	speed = this.value;
 	// update speed of all dots
 	dots.forEach((dot) => {
-		dot.vx = (dot.vx / oldSpeed) * maxSpeed;
-		dot.vy = (dot.vy / oldSpeed) * maxSpeed;
+		dot.vx = (dot.vx / oldSpeed) * speed;
+		dot.vy = (dot.vy / oldSpeed) * speed;
 	});
 };
 
-document.getElementById("maxSize").oninput = function () {
-	const oldSize = maxSize;
-	maxSize = this.value;
+document.getElementById("size").oninput = function () {
+	const oldSize = size;
+	size = this.value;
 	// update size of all dots
 	dots.forEach((dot) => {
-		dot.size = (dot.size / oldSize) * maxSize;
+		dot.size = (dot.size / oldSize) * size;
 	});
 };
 
-function update() {
+function draw() {
 	ctx.clearRect(0, 0, width, height);
 
 	for (let i = 0; i < nDots; i++) {
@@ -126,7 +127,40 @@ function update() {
 			}
 		}
 	}
+}
 
+let lastTime = 0;
+let i = 0;
+
+function updateFrameRate() {
+	const now = performance.now();
+	const elapsed = now - lastTime;
+	lastTime = now;
+
+	const fps = 1000 / elapsed;
+
+	if (fps < IDEAL_FPS - 1) {
+		FPS++;
+	} else if (fps > IDEAL_FPS + 1) {
+		FPS--;
+	}
+
+	i++;
+	if (i > FPS / 2) {
+		i = 0;
+		document.getElementById("fps").innerText = fps.toFixed(2);
+		if (fps < IDEAL_FPS) {
+			document.getElementById("fps").style.color = "red";
+		} else {
+			document.getElementById("fps").style.color = "black";
+		}
+	}
+}
+
+function update() {
+	draw();
+	updateFrameRate();
+	// requestAnimationFrame(update);
 	setTimeout(update, 1000 / FPS);
 }
 
