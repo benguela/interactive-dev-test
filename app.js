@@ -4,11 +4,21 @@ const ctx = canvas.getContext("2d");
 const width = (canvas.width = window.innerWidth);
 const height = (canvas.height = window.innerHeight);
 
-const MAX_DOTS = 100;
-const MAX_SIZE = 10;
-const MAX_SPEED = 10;
+const FPS = 60;
 
-const dots = [];
+let dots = [];
+let maxSpeed = 10;
+let nDots = 100;
+let maxSize = 10;
+
+function genHexString(len) {
+	const hex = "0123456789ABCDEF";
+	let output = "";
+	for (let i = 0; i < len; ++i) {
+		output += hex.charAt(Math.floor(Math.random() * hex.length));
+	}
+	return output;
+}
 
 class Dot {
 	constructor(x, y, size, speed) {
@@ -17,6 +27,7 @@ class Dot {
 		this.size = size;
 		this.vx = Math.cos(speed);
 		this.vy = Math.sin(speed);
+		this.color = "#" + genHexString(6);
 	}
 
 	update() {
@@ -33,33 +44,73 @@ class Dot {
 	}
 }
 
-for (let i = 0; i < MAX_DOTS; i++) {
+for (let i = 0; i < nDots; i++) {
 	dots.push(
 		new Dot(
 			Math.random() * width,
 			Math.random() * height,
-			Math.random() * MAX_SIZE,
-			Math.random() * MAX_SPEED
+			Math.random() * maxSize,
+			Math.random() * maxSpeed
 		)
 	);
 }
 
+// get values from input
+document.getElementById("nDots").oninput = function () {
+	nDots = this.value;
+	const oldDots = dots;
+	dots = [];
+	for (let i = 0; i < nDots; i++) {
+		if (i < oldDots.length) {
+			dots.push(oldDots[i]);
+		} else {
+			dots.push(
+				new Dot(
+					Math.random() * width,
+					Math.random() * height,
+					Math.random() * maxSize,
+					Math.random() * maxSpeed
+				)
+			);
+		}
+	}
+};
+
+document.getElementById("maxSpeed").oninput = function () {
+	const oldSpeed = maxSpeed;
+	maxSpeed = this.value;
+	// update speed of all dots
+	dots.forEach((dot) => {
+		dot.vx = (dot.vx / oldSpeed) * maxSpeed;
+		dot.vy = (dot.vy / oldSpeed) * maxSpeed;
+	});
+};
+
+document.getElementById("maxSize").oninput = function () {
+	const oldSize = maxSize;
+	maxSize = this.value;
+	// update size of all dots
+	dots.forEach((dot) => {
+		dot.size = (dot.size / oldSize) * maxSize;
+	});
+};
+
 function update() {
 	ctx.clearRect(0, 0, width, height);
 
-	for (let i = 0; i < MAX_DOTS; i++) {
+	for (let i = 0; i < nDots; i++) {
 		const p = dots[i];
 		p.update();
 
 		// draw dot
-		// ctx.fillStyle = "white";
+		ctx.fillStyle = p.color;
 		ctx.globalAlpha = 1;
 		ctx.beginPath();
 		ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
 		ctx.fill();
 
 		// draw lines between this and other dots
-		for (let j = 0; j < MAX_DOTS; j++) {
+		for (let j = 0; j < nDots; j++) {
 			const q = dots[j];
 			const dx = p.x - q.x;
 			const dy = p.y - q.y;
@@ -76,7 +127,7 @@ function update() {
 		}
 	}
 
-	requestAnimationFrame(update);
+	setTimeout(update, 1000 / FPS);
 }
 
 update();

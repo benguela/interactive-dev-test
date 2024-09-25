@@ -7,17 +7,35 @@
 				margin: 0;
 				padding: 0;
 				overflow: hidden;
+				font-family: sans-serif;
 			}
 			canvas {
 				display: block;
 				margin: 0 auto;
-				background-color: #f0f0f0;
+				background-color: #ffffff;
 				height: 100vh;
 				width: 100vw;
+			}
+			.inputs {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				background-color: #f0f0f099;
+				padding: 5px;
+				border-radius: 5px;
 			}
 		</style>
 	</head>
 	<body>
+		<div class="inputs">
+			<label for="nDots">Number of dots</label>
+			<input type="number" id="nDots" value="100" />
+			<label for="maxSpeed">Max speed</label>
+			<input type="range" id="maxSpeed" value="10" min="1" max="50" />
+			<label for="maxSpeed">Max size</label>
+			<input type="range" id="maxSize" value="10" min="1" max="50" />
+		</div>
 		<canvas id="canvas"></canvas>
 		<script src="./app.js"></script>
 	</body>
