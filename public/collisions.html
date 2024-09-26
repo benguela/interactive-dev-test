@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Join the dots</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				font-family: sans-serif;
+			}
+			canvas {
+				display: block;
+				margin: 0 auto;
+				background-color: #ffffff;
+				height: 100vh;
+				width: 100vw;
+			}
+			.inputs {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				background-color: #f0f0f099;
+				padding: 5px;
+				border-radius: 5px;
+				display: flex;
+				flex-wrap: wrap;
+			}
+			.inputs label {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				margin-right: 5px;
+			}
+			.fps {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				background-color: #f0f0f099;
+				padding: 5px;
+				border-radius: 5px;
+				text-align: left;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="inputs">
+			<label for="nDots"
+				>Number of dots
+				<input type="range" id="nDots" value="100" min="1" max="200"
+			/></label>
+			<label for="speed"
+				>Speed <input type="range" id="speed" value="10" min="1" max="50"
+			/></label>
+			<label for="size"
+				>Size <input type="range" id="size" value="10" min="1" max="50"
+			/></label>
+			<label for="lineDistance"
+				>Line distance
+				<input type="range" id="lineDistance" value="100" min="10" max="200"
+			/></label>
+
+			<label for="collide"
+				>Collisions <input type="checkbox" id="collisions"
+			/></label>
+			<label for="colors"
+				>Colors <input type="checkbox" id="colors" checked="true"
+			/></label>
+		</div>
+		<canvas id="canvas"></canvas>
+		<p class="fps">FPS: <span id="fps">0</span></p>
+		<script src="./collisions.js"></script>
+	</body>
+</html>
