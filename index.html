@@ -16,15 +16,7 @@
 				height: 100vh;
 				width: 100vw;
 			}
-			.inputs {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				background-color: #f0f0f099;
-				padding: 5px;
-				border-radius: 5px;
-			}
+
 			.fps {
 				position: absolute;
 				bottom: 0;
@@ -39,18 +31,6 @@
 		</style>
 	</head>
 	<body>
-		<div class="inputs">
-			<label for="nDots">Number of dots</label>
-			<input type="range" id="nDots" value="100" min="1" max="200" />
-			<label for="speed">Speed</label>
-			<input type="range" id="speed" value="10" min="1" max="50" />
-			<label for="size">Size</label>
-			<input type="range" id="size" value="10" min="1" max="50" />
-			<label for="lineDistance">Line distance</label>
-			<input type="range" id="lineDistance" value="100" min="10" max="200" />
-			<label for="collide">Collisions</label>
-			<input type="checkbox" id="collisions" />
-		</div>
 		<canvas id="canvas"></canvas>
 		<p class="fps">FPS: <span id="fps">0</span></p>
 		<script src="./app.js"></script>

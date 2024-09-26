@@ -1,28 +1,22 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+const lineDistance = 100;
+const speed = 10;
+const nDots = 100;
+const size = 5;
+let dots = [];
+
 let width = (canvas.width = window.innerWidth);
 let height = (canvas.height = window.innerHeight);
 
-const IDEAL_FPS = 60;
-let FPS = 60;
-let lineDistance = 100;
-
-let dots = [];
-let speed = 10;
-let nDots = 100;
-let size = 10;
-let hasCollisions = false;
-
 // split the window into 100px x 100px squares to make it easier to search dots
 let grid = [];
+let xGrids = Math.ceil(width / lineDistance);
+let yGrids = Math.ceil(height / lineDistance);
 
-for (let i = 0; i < width / lineDistance; i++) {
-	grid.push([]);
-	for (let j = 0; j < height / lineDistance; j++) {
-		grid[i].push([]);
-	}
-}
+let FPS = 60;
+const IDEAL_FPS = 60;
 
 function genHexString(len) {
 	const hex = "0123456789ABCDEF";
@@ -33,6 +27,16 @@ function genHexString(len) {
 	return output;
 }
 
+/**
+ * Dot class
+ *
+ * @param {number} x - x position
+ * @param {number} y - y position
+ * @param {number} size - size of the dot
+ * @param {number} speed - speed of the dot
+ * @returns {Dot}
+ * @constructor
+ */
 class Dot {
 	constructor(x, y, size, speed) {
 		this.x = x;
@@ -57,95 +61,20 @@ class Dot {
 	}
 }
 
-for (let i = 0; i < nDots; i++) {
-	dots.push(
-		new Dot(
-			Math.random() * width,
-			Math.random() * height,
-			size,
-			Math.random() * speed
-		)
-	);
-}
-
-// get values from input
-document.getElementById("nDots").oninput = function () {
-	nDots = parseInt(this.value);
-	const oldDots = dots;
-	dots = [];
-	for (let i = 0; i < nDots; i++) {
-		if (i < oldDots.length) {
-			dots.push(oldDots[i]);
-		} else {
-			dots.push(
-				new Dot(
-					Math.random() * width,
-					Math.random() * height,
-					size,
-					Math.random() * speed
-				)
-			);
-		}
-	}
-};
-
-document.getElementById("speed").oninput = function () {
-	const oldSpeed = speed;
-	speed = parseInt(this.value);
-	// update speed of all dots
-	dots.forEach((dot) => {
-		dot.vx = (dot.vx / oldSpeed) * speed;
-		dot.vy = (dot.vy / oldSpeed) * speed;
-	});
-};
-
-document.getElementById("size").oninput = function () {
-	const oldSize = size;
-	size = parseInt(this.value);
-	// update size of all dots
-	dots.forEach((dot) => {
-		dot.size = (dot.size / oldSize) * size;
-	});
-};
-
-document.getElementById("collisions").onchange = function () {
-	hasCollisions = this.checked;
-};
-
-// max is half the width of the canvas
-const lineDistanceInput = document.getElementById("lineDistance");
-lineDistanceInput.max = width / 2;
-
-document.getElementById("lineDistance").oninput = function () {
-	lineDistance = parseInt(this.value);
-
+function resetGrid() {
 	grid = [];
-	for (let i = 0; i < width / lineDistance; i++) {
+
+	xGrids = Math.ceil(width / lineDistance);
+	yGrids = Math.ceil(height / lineDistance);
+
+	for (let i = 0; i <= xGrids; i++) {
 		grid.push([]);
-		for (let j = 0; j < height / lineDistance; j++) {
-			grid[i].push([]);
-		}
-	}
-};
-
-window.onresize = function () {
-	width = canvas.width = window.innerWidth;
-	height = canvas.height = window.innerHeight;
-
-	lineDistanceInput.max = width / 2;
-	if (lineDistanceInput.value > width / 2) {
-		lineDistanceInput.value = width / 2;
-	}
-
-	grid = [];
-	for (let i = 0; i < width / lineDistance; i++) {
-		grid.push([]);
-		for (let j = 0; j < height / lineDistance; j++) {
+		for (let j = 0; j <= yGrids; j++) {
 			grid[i].push([]);
 		}
 	}
 
-	// move dots to random positions
+	// move dots to random positions if out of bounds of the new grid
 	dots.forEach((dot) => {
 		if (dot.x > width || dot.y > height) {
 			dot.x = Math.random() * width;
@@ -154,11 +83,38 @@ window.onresize = function () {
 	});
 
 	updateGrid();
+}
+
+window.onresize = function () {
+	width = canvas.width = window.innerWidth;
+	height = canvas.height = window.innerHeight;
+
+	resetGrid();
 };
 
+function init() {
+	for (let i = 0; i < xGrids; i++) {
+		grid.push([]);
+		for (let j = 0; j < yGrids; j++) {
+			grid[i].push([]);
+		}
+	}
+
+	for (let i = 0; i < nDots; i++) {
+		dots.push(
+			new Dot(
+				Math.random() * width,
+				Math.random() * height,
+				size,
+				Math.random() * speed
+			)
+		);
+	}
+}
+
 function updateGrid() {
-	for (let i = 0; i < width / lineDistance; i++) {
-		for (let j = 0; j < height / lineDistance; j++) {
+	for (let i = 0; i < xGrids; i++) {
+		for (let j = 0; j < yGrids; j++) {
 			grid[i][j] = [];
 		}
 	}
@@ -167,6 +123,13 @@ function updateGrid() {
 		const x = Math.max(0, Math.floor(dot.x / lineDistance));
 		const y = Math.max(0, Math.floor(dot.y / lineDistance));
 		grid[x][y].push(dot);
+	});
+	// log the grid sizes
+	let r = "";
+	grid.forEach((row) => {
+		row.forEach((cell) => {
+			r += cell.length + " ";
+		});
 	});
 }
 
@@ -178,7 +141,7 @@ function draw() {
 		p.update();
 
 		// draw dot
-		ctx.fillStyle = p.color;
+		ctx.fillStyle = "black";
 		ctx.globalAlpha = 1;
 		ctx.beginPath();
 		ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -187,12 +150,13 @@ function draw() {
 		const x = Math.max(0, Math.floor(p.x / lineDistance));
 		const y = Math.max(0, Math.floor(p.y / lineDistance));
 
-		// draw lines between this and other dots, search only the 8 neighbors
+		// draw lines between this and other dots, search only this square and the 8 neighbors
 		const xMin = Math.max(0, x - 1);
-		const xMax = Math.min(width / lineDistance - 1, x + 1);
+		const xMax = Math.min(xGrids - 1, x + 1);
 		const yMin = Math.max(0, y - 1);
-		const yMax = Math.min(height / lineDistance - 1, y + 1);
+		const yMax = Math.min(yGrids - 1, y + 1);
 
+		// search close grid space for neighbours
 		for (let i = xMin; i <= xMax; i++) {
 			for (let j = yMin; j <= yMax; j++) {
 				const neighbors = grid[i][j];
@@ -215,33 +179,14 @@ function draw() {
 				}
 			}
 		}
-
-		// search for collisions in the same square and change the speed
-		if (hasCollisions) {
-			const neighbors = grid[x][y];
-			for (let j = 0; j < neighbors.length; j++) {
-				const q = neighbors[j];
-
-				if (p !== q) {
-					const dx = p.x - q.x;
-					const dy = p.y - q.y;
-					const dist = Math.sqrt(dx * dx + dy * dy);
-
-					if (dist < p.size + q.size) {
-						q.vx = -q.vx;
-						q.vy = -q.vy;
-					}
-				}
-			}
-		}
 	}
 
 	updateGrid();
 }
 
+// frame rate
 let lastTime = 0;
-let i = 0;
-
+let frame = 0;
 function updateFrameRate() {
 	const now = performance.now();
 	const elapsed = now - lastTime;
@@ -255,9 +200,9 @@ function updateFrameRate() {
 		FPS--;
 	}
 
-	i++;
-	if (i > FPS / 2) {
-		i = 0;
+	frame++;
+	if (frame > FPS / 2) {
+		frame = 0;
 		document.getElementById("fps").innerText = fps.toFixed(2);
 		if (fps < IDEAL_FPS) {
 			document.getElementById("fps").style.color = "red";
@@ -267,6 +212,7 @@ function updateFrameRate() {
 	}
 }
 
+// main loop
 function update() {
 	draw();
 	updateFrameRate();
@@ -274,4 +220,6 @@ function update() {
 	setTimeout(update, 1000 / FPS);
 }
 
+// initialize and start the main loop
+init();
 update();
