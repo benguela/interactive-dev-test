@@ -21,15 +21,6 @@ let yGrids = Math.ceil(height / lineDistance);
 const IDEAL_FPS = 60;
 let FPS = 60;
 
-function genHexString(len) {
-	const hex = "0123456789ABCDEF";
-	let output = "";
-	for (let i = 0; i < len; ++i) {
-		output += hex.charAt(Math.floor(Math.random() * hex.length));
-	}
-	return output;
-}
-
 // get values from inputs
 document.getElementById("nDots").oninput = function () {
 	nDots = parseInt(this.value);
@@ -77,7 +68,7 @@ document.getElementById("collisions").onchange = function () {
 document.getElementById("colors").onchange = function () {
 	hasColors = this.checked;
 	dots.forEach((dot) => {
-		dot.color = hasColors ? "#" + genHexString(6) : "black";
+		dot.color = hasColors ? Dot.genColor() : "black";
 	});
 };
 

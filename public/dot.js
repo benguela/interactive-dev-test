@@ -1,3 +1,12 @@
+function genHexString(len) {
+	const hex = "0123456789ABCDEF";
+	let output = "";
+	for (let i = 0; i < len; ++i) {
+		output += hex.charAt(Math.floor(Math.random() * hex.length));
+	}
+	return output;
+}
+
 /**
  * Dot class
  *
@@ -15,7 +24,7 @@ class Dot {
 		this.size = size;
 		this.vx = Math.cos(speed);
 		this.vy = Math.sin(speed);
-		this.color = "#" + genHexString(6);
+		this.color = Dot.genColor();
 	}
 
 	update() {
@@ -29,6 +38,10 @@ class Dot {
 
 		this.x += this.vx;
 		this.y += this.vy;
+	}
+
+	static genColor() {
+		return "#" + genHexString(6);
 	}
 }
 
